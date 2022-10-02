@@ -8,6 +8,7 @@ type BountyAsset struct {
 	Port       string    `gorm:"index:index_asset;column:port;type:varchar(255)"`                                  //  资产端口
 	Rootdomain string    `gorm:"column:rootdomain;type:varchar(255)"`                                              //  根域名
 	Domain     string    `gorm:"column:domain;type:varchar(255)"`                                                  //  域名
+	WebWeight  int64     `gorm:"column:web_weight;type:bigint(20) unsigned"`                                       // 网站权重
 	AssetUrl   string    `gorm:"column:asset_url;type:varchar(255)"`                                               //  资产url，例如111.111.111.111:8443
 	FullUrl    string    `gorm:"column:full_url;type:varchar(255)"`                                                //  url全量链接
 	VulnUrl    string    `gorm:"column:vuln_url;type:varchar(255)"`                                                //  其他链接，如漏洞链接
