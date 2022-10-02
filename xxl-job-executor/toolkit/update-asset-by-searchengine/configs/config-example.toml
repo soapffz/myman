@@ -1,0 +1,13 @@
+# this is a toml 
+
+title = "soapffz's myman config"
+
+[mysql]
+host = "127.0.0.1"
+port = "3306"
+username = "root"
+password = "123456"
+dbname = "bounty"
+
+[quake]
+quakekey = "111111-1111-1111-1111-11111111"
