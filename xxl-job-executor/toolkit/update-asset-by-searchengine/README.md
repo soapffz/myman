@@ -33,9 +33,9 @@
 ## 🥃更新日志
 
  - 2022-10-02，根据[quake_go](https://github.com/360quake/quake_go)项目更改架构
-  - 修复：根据原作者代码修改相关字段
-  - 还存在的问题：见[issue](https://github.com/360quake/quake_go/issues/14)，待作者修复此bug后再对应修改，本地使用可先强行注释本地库文件中相关代码
-  - 还需优化的点：对于循环次数的判断，还没有太好的方法直接读取到行数或者数据返回大小
+    - 修复：根据原作者代码修改相关字段
+    - 还存在的问题：见[issue](https://github.com/360quake/quake_go/issues/14)，待作者修复此bug后再对应修改，本地使用可先强行注释本地库文件中相关代码
+    - 还需优化的点：对于循环次数的判断，还没有太好的方法直接读取到行数或者数据返回大小
 
  - 2022-09-21，更新代码架构，把常用函数全部放到[go_common_functions](go_common_functions),并更换使用[quake_go](https://github.com/360quake/quake_go)，避免了命令执行保存到本地又再次解析本地文件的麻烦
 
