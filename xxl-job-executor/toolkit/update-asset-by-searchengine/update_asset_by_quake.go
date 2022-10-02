@@ -117,6 +117,10 @@ func main() {
 				// 每次循环重置新的reqjson.Start
 				reqjson.Start = strconv.Itoa(i * 100)
 				body := utils.SearchServicePost(reqjson, quake_token)
+				if len(body) <= 121 {
+					break
+				}
+				// fmt.Println(len(body))
 				parseQuekeGoDataAndWriteDb(db, reqjson, body, relatedapp)
 			}
 		}
