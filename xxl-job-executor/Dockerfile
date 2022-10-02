@@ -55,6 +55,7 @@ RUN chmod +x ./f8x
 RUN ./f8x -b -zsh -ka -kb -py38 -py2 -pip2-f -chromium -frp -nn -wpscan -cs
 
 # install go of latest version
+RUN touch /tmp/IS_CI
 RUN ./f8x -go
 
 # Intstall msf
