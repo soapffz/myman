@@ -61,5 +61,4 @@ func Yongyou_nc(asset_l []db_model.BountyAsset, yongyou_nc_poc_path string) []st
 		return vul_result_l
 	}
 	return nil
-
 }

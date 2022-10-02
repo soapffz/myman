@@ -11,3 +11,6 @@ dbname = "bounty"
 
 [nuclei]
 nuclei_poc_dir_path = "/root/toolkit/myown-nuclei-poc"
+
+[serverJ]
+serverJkey = "xxxxxxxxxxxxxxxxx"

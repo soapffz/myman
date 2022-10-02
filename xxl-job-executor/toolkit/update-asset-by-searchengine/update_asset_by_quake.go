@@ -57,7 +57,6 @@ func main() {
 	port := viper.GetString("mysql.port")         //数据库端口
 	dbname := viper.GetString("mysql.dbname")     //数据库名
 	db := tools.ConnectMysqlDb(username, password, host, port, dbname)
-	fmt.Println(db)
 
 	// 初始化quakego命令行参数解析
 	tools.QuakeGoHflagInit()
@@ -83,17 +82,17 @@ func main() {
 		fmt.Println("#Token:", data_result["token"])
 	} else {
 		// 根据传入参数内容进行查询
-		reqjson.End_time = hflag.GetTime("end_time")
-		reqjson.Ignore_cache = hflag.GetBool("ignore_cache")
+		reqjson.EndTime = hflag.GetTime("end_time")
+		reqjson.IgnoreCache = hflag.GetBool("ignore_cache")
 		reqjson.Field = hflag.GetString("field")
-		reqjson.Query_txt = hflag.GetString("file_txt")
+		reqjson.QueryTxt = hflag.GetString("file_txt")
 
-		reqjson.Start_time = hflag.GetTime("start_time")
-		if reqjson.Start_time.Format("2006-01-02") == strconv.Itoa(time.Now().Year())+"-01-01" {
+		reqjson.StartTime = hflag.GetTime("start_time")
+		if reqjson.StartTime.Format("2006-01-02") == strconv.Itoa(time.Now().Year())+"-01-01" {
 			// 如果时间默认没有更改，则设置为从今天的0点开始
 			today := time.Now().Format("2006-01-02")
 			parsed, _ := time.Parse("2006-01-02", today)
-			reqjson.Start_time = parsed
+			reqjson.StartTime = parsed
 		}
 
 		relatedapp := hflag.GetString("relatedapp")
@@ -127,9 +126,10 @@ func main() {
 
 func parseQuekeGoDataAndWriteDb(db *gorm.DB, reqjson utils.Reqjson, body string, relatedapp string) {
 	// 通过每次命令查询后解析quake_go返回的数据，解析后放入数据库
-	data_result := utils.RespLoadJson[utils.SearchJson](body).Data
+	// 此处如果有报错参考原项目的
+	dataResult := utils.RespLoadJson[utils.SearchJson](body).Data
 	if reqjson.Field != "" && reqjson.Field != "ip,port" {
-		for _, value := range data_result {
+		for _, value := range dataResult {
 			if value.Service.HTTP[reqjson.Field] == nil {
 				fmt.Println(value.IP + ":" + "  " + strconv.Itoa(value.Port))
 			} else {
@@ -138,7 +138,7 @@ func parseQuekeGoDataAndWriteDb(db *gorm.DB, reqjson utils.Reqjson, body string,
 			writeRecord(db, value.IP, strconv.Itoa(value.Port), relatedapp)
 		}
 	} else {
-		for _, value := range data_result {
+		for _, value := range dataResult {
 			fmt.Println(value.IP + ":" + strconv.Itoa(value.Port))
 			writeRecord(db, value.IP, strconv.Itoa(value.Port), relatedapp)
 		}

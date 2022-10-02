@@ -16,6 +16,7 @@ import (
 
 	"scan-when-asset-add/db_model"
 
+	"github.com/soapffz/common-go-functions/pkg"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
@@ -78,6 +79,9 @@ func main() {
 	dbname := viper.GetString("mysql.dbname")     //数据库名
 	db := tools.ConnectMysqlDb(username, password, host, port, dbname)
 
+	// 读取推送消息的serverJ的key
+	serverJkey := viper.GetString("serverJ.serverJkey")
+
 	// 查询数据库指定时间内是否有新数据插入，时间周期与xxl-job定时时间保持一致
 	xxljob_crontab_second := 600
 	m, _ := time.ParseDuration("-1s")
@@ -94,7 +98,12 @@ func main() {
 			{
 				yongyou_nc_poc_path := nuclei_poc_dir_path + "/yongyou/yongyou-nc-beanshell-rce.yaml"
 				vul_result_l := util_scans.Yongyou_nc(asset_l, yongyou_nc_poc_path)
-				UpdateRecordWithVulnInfo(db, args_relatedapp_type, vul_result_l, genrepoer_flag)
+				if vul_result_l != nil {
+					// 通知有新的漏洞链接
+					pkg.PushMsgByServerJ(serverJkey, "quake监测漏洞通知", "有新的"+args_relatedapp_type+"漏洞，数量个数为"+strconv.Itoa(len(vul_result_l)))
+					UpdateRecordWithVulnInfo(db, args_relatedapp_type, vul_result_l, genrepoer_flag)
+				}
+
 			}
 		default:
 			{
