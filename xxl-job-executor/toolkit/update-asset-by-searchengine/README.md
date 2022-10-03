@@ -18,8 +18,6 @@
 
 前置条件：在configs/文件夹中复制一份config-example.toml修改为config.toml，按照自己配置修改即可使用
 
-完整使用方法：
-
 比[quake_go](https://github.com/360quake/quake_go)的使用方法多添加了两个参数
 
 ```
@@ -27,6 +25,8 @@
 
 -downall_flag,-da，是否下载查询到的所有数据，默认为否，若开启单次最多下载1000条数据
 ```
+
+完整使用方法：
 
 ```
 usage: update_asset_by_quake [option] [args] [-da,downall_flag bool=false] [-e,end_time time=2022-10-03 20:02:51] [-fe,field string] [-ft,file_txt string] [-h,help bool] [-ic,ignore_cache bool=false] [-rp,relatedapp string] [-sz,size string=10] [-st,start string=0] [-s,start_time time=2022-01-01]

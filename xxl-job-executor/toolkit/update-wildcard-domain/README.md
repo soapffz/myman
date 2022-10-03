@@ -1,6 +1,10 @@
 # 🚁update-wildcard-domain，更新通配符域名
 
-## 🪷功能
+## 简介
+
+🌟一款[soapffz](https://github.com/soapffz)个人自用的漏扫及告警流程，用于批量刷洞
+
+## 🥐模块功能
 
 解析[bounty-targets-data](https://github.com/arkadiyt/bounty-targets-data)中数据，提取通配符域名并更新到数据库中
 
