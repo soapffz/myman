@@ -1,6 +1,6 @@
 # 🚁update-wildcard-domain，更新通配符域名
 
-## 功能
+## 🪷功能
 
 解析[bounty-targets-data](https://github.com/arkadiyt/bounty-targets-data)中数据，提取通配符域名并更新到数据库中
 
@@ -8,11 +8,13 @@
 
  - 获取到没有的通配符域名时则插入，已存在的数据则更新时间
 
-## 使用方法
+## 💫使用方法
 
-按自己配置填写configs/config-example.toml，修改文件名为config.toml即可使用
+前置条件：在configs/文件夹中复制一份config-example.toml修改为config.toml，按照自己配置修改即可使用
 
-## 演示截图
+命令行使用: 没有额外参数，直接使用即可
+
+## 💥演示截图
 
 数据库截图-2022年9月10日
 

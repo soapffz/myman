@@ -1,8 +1,12 @@
 # 🚁update-asset-by-searchengine，使用搜索引擎监控资产更新
 
-## 🥐功能
+## 简介
 
-从网络空间搜索引擎下载每日更新数据更新到数据库
+🌟一款[soapffz](https://github.com/soapffz)个人自用的漏扫及告警流程，用于批量刷洞
+
+## 🥐模块功能
+
+从网络空间搜索引擎下载每日更新数据更新到数据库，数据库模型为[soapffz/myman/bounty_asset](https://github.com/soapffz/myman/blob/main/bounty-database/bounty_asset.sql)
 
 目前使用[360quake](https://quake.360.cn/quake/#/index)API进行数据查询
 
@@ -12,12 +16,36 @@
 
 ## 🍣使用方法
 
-与[quake_go](https://github.com/360quake/quake_go)使用方法一致，除此之外还添加了两个参数
+前置条件：在configs/文件夹中复制一份config-example.toml修改为config.toml，按照自己配置修改即可使用
+
+完整使用方法：
+
+比[quake_go](https://github.com/360quake/quake_go)的使用方法多添加了两个参数
 
 ```
 -relatedapp,-rp,相关的app,与数据库模型中的relatedapp字段对应
 
 -downall_flag,-da，是否下载查询到的所有数据，默认为否，若开启单次最多下载1000条数据
+```
+
+```
+usage: update_asset_by_quake [option] [args] [-da,downall_flag bool=false] [-e,end_time time=2022-10-03 20:02:51] [-fe,field string] [-ft,file_txt string] [-h,help bool] [-ic,ignore_cache bool=false] [-rp,relatedapp string] [-sz,size string=10] [-st,start string=0] [-s,start_time time=2022-01-01]
+
+positional options:
+       option          [string]                    init,info,search,host
+       args            [string]                    query value,example port:443
+
+options:
+  -da, --downall_flag  [bool=false]                -da download all data,default false
+   -e, --end_time      [time=2022-10-03 20:02:51]  -e time to end time flag
+  -fe, --field         [string]                    -fe swich body,title,host,html_hash,x_powered_by  to show infomation
+  -ft, --file_txt      [string]                    -ft ./file.txt file to query search
+   -h, --help          [bool]                      show usage
+  -ic, --ignore_cache  [bool=false]                -ic true or false,default false
+  -rp, --relatedapp    [string]                    -rp related app 
+  -sz, --size          [string=10]                 -sz to size number 
+  -st, --start         [string=0]                  -st to start number
+   -s, --start_time    [time=2022-01-01]           -s time flag , default time is time.now.year
 ```
 
 按自己配置填写configs/config-example.toml，修改文件名为config.toml
