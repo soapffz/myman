@@ -49,7 +49,7 @@ func GetDataFromAsset(begin_time string, tags string, db *gorm.DB) []db_model.Bo
 	now_time := time.Now().Format("2006-01-02 15:04:05")
 	// var bountyasset db_model.BountyAsset
 	var bountyassets []db_model.BountyAsset
-	begin_time = "2022-09-13 01:15:12" // 测试时为查询数据指定较早时间
+	// begin_time = "2022-09-13 01:15:12" // 测试时为查询数据指定较早时间
 	db.Where("createtime BETWEEN ? AND ? AND relatedapp = ?", begin_time, now_time, tags).Find(&bountyassets)
 	return bountyassets
 }
