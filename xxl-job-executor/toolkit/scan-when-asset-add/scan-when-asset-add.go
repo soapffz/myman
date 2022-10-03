@@ -5,18 +5,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
-	"net/url"
 	"os"
 	"scan-when-asset-add/tools"
 	"scan-when-asset-add/util_scans"
 	"strconv"
-	"strings"
 	"time"
 
 	"scan-when-asset-add/db_model"
 
-	"github.com/soapffz/common-go-functions/pkg"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
@@ -88,6 +84,7 @@ func main() {
 	m1 := time.Now().Add(time.Duration(xxljob_crontab_second) * m)
 	begin_time := m1.Format("2006-01-02 15:04:05")
 	asset_l := GetDataFromAsset(begin_time, args_relatedapp_type, db)
+	// 资产列表直接为结构体的数组，在漏洞扫描函数中得到漏洞url及对应解析资产后直接写入数据库
 
 	if len(asset_l) > 0 {
 		fmt.Println("数据查询成功，共有" + strconv.Itoa(len(asset_l)) + "条数据")
@@ -97,13 +94,7 @@ func main() {
 		case "yongyou_nc":
 			{
 				yongyou_nc_poc_path := nuclei_poc_dir_path + "/yongyou/yongyou-nc-beanshell-rce.yaml"
-				vul_result_l := util_scans.Yongyou_nc(asset_l, yongyou_nc_poc_path)
-				if vul_result_l != nil {
-					// 通知有新的漏洞链接
-					pkg.PushMsgByServerJ(serverJkey, "quake监测漏洞通知", "有新的"+args_relatedapp_type+"漏洞，数量个数为"+strconv.Itoa(len(vul_result_l)))
-					UpdateRecordWithVulnInfo(db, args_relatedapp_type, vul_result_l, genrepoer_flag)
-				}
-
+				util_scans.Yongyou_nc(db, args_relatedapp_type, asset_l, yongyou_nc_poc_path, genrepoer_flag, serverJkey)
 			}
 		default:
 			{
@@ -114,30 +105,5 @@ func main() {
 	} else {
 		fmt.Println("查询无更新数据，请稍后再来～")
 		os.Exit(0)
-	}
-}
-
-func UpdateRecordWithVulnInfo(db *gorm.DB, args_relatedapp_type string, vul_result_l []string, genrepoer_flag bool) {
-	// 根据漏洞类型解析数据更新数据库，并根据是否输出报告模版参数进行操作
-	var bountyasset db_model.BountyAsset
-	for _, line_vul_l := range vul_result_l {
-		vul_l := strings.Replace(line_vul_l, "\n", "", -1)
-		// 解析数据
-		u, err := url.Parse(vul_l)
-		if err != nil {
-			log.Fatal(err)
-		}
-		host := u.Host
-		ip_port_l := strings.Split(host, ":")
-		ip := ip_port_l[0]
-		port := ip_port_l[1]
-
-		// 更新数据库
-		db.Model(&bountyasset).Where("ip = ? AND port = ? AND relatedapp = ?", ip, port, args_relatedapp_type).Update("vuln_url", vul_l)
-
-		// 按是否需要生成报告选项进行判断
-		if genrepoer_flag == true {
-			fmt.Println("报告模版生成在思考中")
-		}
 	}
 }

@@ -3,7 +3,7 @@ module update-asset-by-searchengine
 go 1.19
 
 require (
-	github.com/360quake/quake_go v0.0.0-20220929030704-5e5d449daa88
+	github.com/360quake/quake_go v0.0.0-20221002150435-5591abbabc2b
 	github.com/fatih/color v1.13.0
 	github.com/hpifu/go-kit v1.8.8
 	github.com/spf13/viper v1.13.0

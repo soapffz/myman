@@ -91,6 +91,7 @@ func main() {
 		if reqjson.StartTime.Format("2006-01-02") == strconv.Itoa(time.Now().Year())+"-01-01" {
 			// 如果时间默认没有更改，则设置为从今天的0点开始
 			today := time.Now().Format("2006-01-02")
+			// yesday := time.Now().AddDate(0, 0, -1).Format("2006-01-02")
 			parsed, _ := time.Parse("2006-01-02", today)
 			reqjson.StartTime = parsed
 		}
