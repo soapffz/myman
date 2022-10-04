@@ -13,15 +13,15 @@ import (
 	"gorm.io/gorm"
 )
 
-func Yongyou_nc(db *gorm.DB, args_relatedapp_type string, data db_model.BountyAsset, yongyou_nc_poc_path string, genrepoer_flag bool, serverJkey string) {
+func ScanByNuclei(db *gorm.DB, args_relatedapp_type string, data db_model.BountyAsset, poc_path string, genrepoer_flag bool, serverJkey string) {
 	// 传入的是每个bountyasset结构体
-	// 使用用友nc的nuclei模版进行漏扫，扫完后有漏洞url的进行域名解析及权重查询，写进数据库
+	// 使用对应漏洞类型的nuclei模版进行漏扫，扫完后有漏洞url的进行域名解析及权重查询，写进数据库
 
 	// 取出ip和端口组合成链接
 	data_url := "http://" + data.Ip + ":" + data.Port
 
 	// 执行对应nuclei脚本扫描链接，每条执行完后都获取执行结果（CombinedOutput方法不能实时）
-	nc_command := exec.Command("nuclei", "-s", "medium,high,critical", "-t", yongyou_nc_poc_path, "-u", data_url, "-o", "nuclei_results", "-silent", "-nts", "-irr")
+	nc_command := exec.Command("nuclei", "-s", "medium,high,critical", "-t", poc_path, "-u", data_url, "-silent", "-nts", "-irr")
 	output, _ := nc_command.CombinedOutput()
 	scan_result := string(output)
 
@@ -45,9 +45,9 @@ func Yongyou_nc(db *gorm.DB, args_relatedapp_type string, data db_model.BountyAs
 			if domain != "" && root_domain_web_weight >= 2 {
 				// 权重大于指定值，则推送消息通知
 				content := root_domain + "\n" + domain + "\n" + strconv.Itoa(root_domain_web_weight) + "\n" + vul_l
-				pkg.PushMsgByServerJ(serverJkey, "用友nc新漏洞链接推送", "有新的用友nc漏洞可以提交了：\n"+content)
+				pkg.PushMsgByServerJ(serverJkey, "xxl-job监测到了新漏洞", "有新的"+args_relatedapp_type+"漏洞可以提交了：\n"+content)
 			}
-			fmt.Println("[INFO] writing " + vul_l)
+			fmt.Println("[" + args_relatedapp_type + "] Writing: " + vul_l)
 			// 根据解析结果写入数据库
 			UpdateRecordWithVulnInfo(db, args_relatedapp_type, ip, port, vul_l, domain, root_domain, root_domain_web_weight, genrepoer_flag, serverJkey)
 		}

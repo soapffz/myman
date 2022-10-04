@@ -49,7 +49,7 @@ func GetDataFromAsset(begin_time string, args_relatedapp_type string, scan_allty
 	now_time := time.Now().Format("2006-01-02 15:04:05")
 	// var bountyasset db_model.BountyAsset
 	var bountyassets []db_model.BountyAsset
-	// begin_time = "2022-10-04 08:00:00" // 测试时取消这句注释，即可指定较早时间的数据
+	begin_time = "2022-10-04 08:00:00" // 测试时取消这句注释，即可指定较早时间的数据
 	if scan_alltype_flag {
 		// 若传入的“扫描所有类型数据”为真，则获取指定时间内所有标签数据并返回
 		db.Where("createtime BETWEEN ? AND ?", begin_time, now_time).Find(&bountyassets)
@@ -100,7 +100,7 @@ func main() {
 			case "yongyou_nc":
 				{
 					yongyou_nc_poc_path := nuclei_poc_dir_path + "/yongyou/yongyou-nc-beanshell-rce.yaml"
-					util_scans.Yongyou_nc(db, args_relatedapp_type, data, yongyou_nc_poc_path, genrepoer_flag, serverJkey)
+					util_scans.ScanByNuclei(db, relatedapp_type, data, yongyou_nc_poc_path, genrepoer_flag, serverJkey)
 				}
 			default:
 				{
