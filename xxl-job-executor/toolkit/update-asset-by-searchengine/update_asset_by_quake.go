@@ -91,17 +91,16 @@ func main() {
 		if reqjson.StartTime.Format("2006-01-02") == strconv.Itoa(time.Now().Year())+"-01-01" {
 			// 如果时间默认没有更改，则设置为从今天的0点开始
 			today := time.Now().Format("2006-01-02")
-			// yesday := time.Now().AddDate(0, 0, -1).Format("2006-01-02")
+			// yesday := time.Now().AddDate(0, 0, -1).Format("2006-01-02") // 测试时注释掉此语句则查询从昨天到现在的数据
+			// lastyear_today := time.Now().AddDate(-1, 0, 0).Format("2006-01-02") // 测试时注释掉此语句则查询去年今天到现在的数据
 			parsed, _ := time.Parse("2006-01-02", today)
 			reqjson.StartTime = parsed
 		}
 
 		relatedapp := hflag.GetString("relatedapp")
-		// if relatedapp == "" {
-		// 	log.Fatal("请注意没有传入相关app")
-		// } else {
-		// 	log.Println("传入的关联app参数为" + relatedapp)
-		// }
+		if relatedapp == "" {
+			fmt.Println("未传入关联app关键词，本次数据更新将不带标签！")
+		}
 
 		reqjson.Start = hflag.GetString("start")
 		reqjson.Size = hflag.GetString("size")
@@ -114,16 +113,19 @@ func main() {
 			reqjson.Start = "0"
 
 			// 如果要下载全部，则没批次设置下载100条数据，则最多循环10次，当单次下载的数据小于100时结束
-			for i := 0; i <= 9; i++ {
+			for i := 0; i <= 100; i++ {
 				// 每次循环重置新的reqjson.Start
 				reqjson.Start = strconv.Itoa(i * 100)
 				body := utils.SearchServicePost(reqjson, quake_token)
 				if len(body) <= 121 {
+					// 此处还需要优化，暂时测试没有返回值的quake查询结果长度为121
 					break
 				}
 				// fmt.Println(len(body))
+				// 解析quake返回的数据并写入数据库
 				parseQuekeGoDataAndWriteDb(db, reqjson, body, relatedapp)
 			}
+			// 对数据库进行处理，对于同一个ip+关联app出现5次以上的认为是蜜罐，将涉及该ip的数据全部删除掉并加入黑名单
 		}
 
 	}
@@ -133,6 +135,7 @@ func parseQuekeGoDataAndWriteDb(db *gorm.DB, reqjson utils.Reqjson, body string,
 	// 通过每次命令查询后解析quake_go返回的数据，解析后放入数据库
 	// 此处如果有报错参考原项目的
 	dataResult := utils.RespLoadJson[utils.SearchJson](body).Data
+	// fmt.Println(dataResult)
 	if reqjson.Field != "" && reqjson.Field != "ip,port" {
 		for _, value := range dataResult {
 			if value.Service.HTTP[reqjson.Field] == nil {
