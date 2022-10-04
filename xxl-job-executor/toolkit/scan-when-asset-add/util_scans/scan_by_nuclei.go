@@ -27,12 +27,11 @@ func ScanByNuclei(db *gorm.DB, args_relatedapp_type string, data db_model.Bounty
 
 	// 如果执行有输出则表示扫描成功,提取漏洞url、ip、端口
 	if len(scan_result) > 0 {
-		split_l := strings.Split(scan_result, "high")
-		if len(split_l) == 2 {
-			tmp_split_l := strings.Split(split_l[1], " ")
-
-			// 获取漏洞url
-			vul_l := strings.Replace(tmp_split_l[1], "\n", "", -1)
+		// 获取漏洞链接
+		no_head_vul_l := strings.Split(scan_result, "http://")
+		if len(no_head_vul_l) == 2 {
+			tmp_vul_l := "http://" + no_head_vul_l[1]
+			vul_l := strings.Replace(tmp_vul_l, "\n", "", -1)
 			// 解析漏洞url得到ip及port
 			u, _ := url.Parse(vul_l)
 			host := u.Host
@@ -40,6 +39,7 @@ func ScanByNuclei(db *gorm.DB, args_relatedapp_type string, data db_model.Bounty
 			ip := ip_port_l[0]
 			port := ip_port_l[1]
 
+			fmt.Println(vul_l)
 			// 根据ip进行域名解析及网站权重查询
 			domain, root_domain, root_domain_web_weight := pkg.Ip2DomainAndWebWeight(ip)
 			if domain != "" && root_domain_web_weight >= 2 {

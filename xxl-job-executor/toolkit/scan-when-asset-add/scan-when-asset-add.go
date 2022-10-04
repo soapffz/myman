@@ -102,6 +102,11 @@ func main() {
 					yongyou_nc_poc_path := nuclei_poc_dir_path + "/yongyou/yongyou-nc-beanshell-rce.yaml"
 					util_scans.ScanByNuclei(db, relatedapp_type, data, yongyou_nc_poc_path, genrepoer_flag, serverJkey)
 				}
+			case "fanwei_eoffice_v10":
+				{
+					fanwei_eoffice_v10_poc_path := nuclei_poc_dir_path + "/fanwei/fanwei-e-office-v10-fileupload.yaml"
+					util_scans.ScanByNuclei(db, relatedapp_type, data, fanwei_eoffice_v10_poc_path, genrepoer_flag, serverJkey)
+				}
 			default:
 				{
 					continue
