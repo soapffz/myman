@@ -39,7 +39,6 @@ func ScanByNuclei(db *gorm.DB, args_relatedapp_type string, data db_model.Bounty
 			ip := ip_port_l[0]
 			port := ip_port_l[1]
 
-			fmt.Println(vul_l)
 			// 根据ip进行域名解析及网站权重查询
 			domain, root_domain, root_domain_web_weight := pkg.Ip2DomainAndWebWeight(ip)
 			if domain != "" && root_domain_web_weight >= 2 {
