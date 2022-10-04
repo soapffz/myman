@@ -103,7 +103,9 @@ RUN cd ${HOME}/wordlists/ && \
 # soapffz's tools
 RUN cd ${HOME}/toolkit/ \
     && git clone https://github.com/soapffz/myman \
-    && cp -rf myman/xxl-job-executor/toolkit/* ./
+    && cp -rf myman/xxl-job-executor/toolkit/* ./ \
+    && rm -rf myman/ \
+    && git clone https://github.com/soapffz/myown-nuclei-poc
 
 # xxl-job-executor things
 ENV PARAMS=""
