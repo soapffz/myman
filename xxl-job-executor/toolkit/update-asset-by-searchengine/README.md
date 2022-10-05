@@ -16,13 +16,15 @@
 
 ## 🍣使用方法
 
-### 使用前置条件
+### 🪷使用前置条件
 
 1.需要已有按数据库模型[soapffz/myman/bounty_asset](https://github.com/soapffz/myman/blob/main/bounty-database/bounty_asset.sql)创建的bounty数据库及相应表
 
 2.在configs/文件夹中复制一份config-example.toml修改为config.toml，按照自己配置修改
 
-### 快速使用方法
+
+
+### 🌹快速使用方法
 
 比[quake_go](https://github.com/360quake/quake_go)的使用方法多添加了三个参数
 
@@ -44,7 +46,9 @@
    - 本程序使用[gorm](https://gorm.io/zh_CN/docs/index.html)库进行数据库插入时候会根据ip:port唯一联合索引处理重复
 
 
-### 完整参数
+
+
+### 🌞完整参数
 
 ```
 usage: update_asset_by_quake [option] [args] [-da,downall_flag bool=false] [-e,end_time time=2022-10-05 22:23:44] [-fe,field string] [-ft,file_txt string] [-h,help bool] [-ic,ignore_cache bool=false] [-rp,relatedapp string] [-sz,size string=10] [-st,start string=0] [-s,start_time time=2022-01-01] [-ua,updateallapp_flag bool=false]
@@ -72,14 +76,17 @@ options:
 ## 🥃更新日志
 
  - 2022-10-05
-    - 1.[add] 新增-ua参数，一键更新配置中所有资产，配合-da下载所有数据参数，可一键下载并更新所有app的当日数据
-    - 2.[update] 更新了代码架构、一些小的测试用例，将单次最大下载放宽至10000条数据，不传入关联app关键词将提示，但不会阻止程序运行
+    - [add] 新增-ua参数，一键更新配置中所有资产，配合-da下载所有数据参数，可一键下载并更新所有app的当日数据
+    - [update] 更新了代码架构、一些小的测试用例，将单次最大下载放宽至10000条数据，不传入关联app关键词将提示，但不会阻止程序运行
 
- - 2022-10-02，根据[quake_go](https://github.com/360quake/quake_go)项目更改架构
-    - 修复：根据原作者代码修改相关字段
-    - 还存在的问题：见[issue](https://github.com/360quake/quake_go/issues/14)，待作者修复此bug后再对应修改，本地使用可先强行注释本地库文件中相关代码
-    - 还需优化的点：对于循环次数的判断，还没有太好的方法直接读取到行数或者数据返回大小
+ - 2022-10-02
+    - [update] 根据[quake_go](https://github.com/360quake/quake_go)项目更改架构
+    - [fix] 根据原作者代码修改相关字段
+    - [known_issue] 见[issue](https://github.com/360quake/quake_go/issues/14)，待作者修复此bug后再对应修改，本地使用可先强行注释本地库文件中相关代码
+    - [known_issue] 对于循环次数的判断，还没有太好的方法直接读取到行数或者数据返回大小
 
- - 2022-09-21，更新代码架构，把常用函数全部放到[go_common_functions](go_common_functions),并更换使用[quake_go](https://github.com/360quake/quake_go)，避免了命令执行保存到本地又再次解析本地文件的麻烦
+ - 2022-09-21
+    - [update] 更新代码架构，把常用函数全部放到[go_common_functions](go_common_functions),并更换使用[quake_go](https://github.com/360quake/quake_go)，避免了命令执行保存到本地又再次解析本地文件的麻烦
 
- - 2022-09-12，首次添加代码，使用的是(quake_rs](https://github.com/360quake/quake_rs)
+ - 2022-09-12
+    - [add] 首次添加代码，使用的是(quake_rs](https://github.com/360quake/quake_rs)
