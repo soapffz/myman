@@ -45,10 +45,13 @@ func ScanByNuclei(db *gorm.DB, args_relatedapp_type string, data db_model.Bounty
 				// 权重大于指定值，则推送消息通知
 				content := root_domain + "\n" + domain + "\n" + strconv.Itoa(root_domain_web_weight) + "\n" + vul_l
 				pkg.PushMsgByServerJ(serverJkey, "xxl-job监测到了新漏洞", "有新的"+args_relatedapp_type+"漏洞可以提交了：\n"+content)
+				if genrepoer_flag {
+					fmt.Println("漏洞模版soapffz还在思考中")
+				}
 			}
 			fmt.Println("[" + args_relatedapp_type + "] Writing: " + vul_l)
 			// 根据解析结果写入数据库
-			UpdateRecordWithVulnInfo(db, args_relatedapp_type, ip, port, vul_l, domain, root_domain, root_domain_web_weight, genrepoer_flag, serverJkey)
+			UpdateRecordWithVulnInfo(db, args_relatedapp_type, ip, port, vul_l, domain, root_domain, root_domain_web_weight, serverJkey)
 		}
 	}
 }

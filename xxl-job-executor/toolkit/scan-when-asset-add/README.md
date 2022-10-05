@@ -10,41 +10,50 @@
 
 配合[xxl-job-executor](https://github.com/soapffz/myman/tree/main/xxl-job-executor)设置定时任务可实现自动化完成定时漏洞监测及通知
 
-## 🥙使用方法
+## 🍣使用方法
 
-前置条件：在configs/文件夹中复制一份config-example.toml修改为config.toml，按照自己配置修改即可使用
+### 🪷使用前置条件
 
-命令行使用:
+1.需要已有按数据库模型[soapffz/myman/bounty_asset](https://github.com/soapffz/myman/blob/main/bounty-database/bounty_asset.sql)创建的bounty数据库及相应表
+
+2.在configs/文件夹中复制一份config-example.toml修改为config.toml，按照自己配置修改
+
+
+
+### 🌹快速使用方法
 
 ```
+-vp string
+      扫描指定app关键词，需与数据库中相同
+-sall
+      扫描配置文件中的所有关联app类型，默认关闭
 -gen
       是否生成漏洞提交报告模版，默认关闭
--sall
-      扫描数据库中所有已知标签数据，默认关闭
--vp string
-      对应的app关键词，需与数据库中相同
 
-同时使用-vp指定app关键词及使用-sall扫描所有数据标签时，以-sall扫描所有标签为准
 ```
+
+ - -sall和-vp参数共用时，以-sall为准，-gen参数可在两种模式下均使用
 
 ## 🧆演示截图
 
 ## 🍝更新日志
 
  - 2022-10-05
-      - 1.更新获取nuclei扫出结果解析部分代码，
-      - 2.添加泛微Eoffice漏洞扫描选项
+      - [update] 重构扫描所有app部分的功能架构
+      - [update] 更新获取nuclei扫出结果解析部分代码
 
  - 2022-10-04
-      - 1.增加-sall参数，开启时候直接启动所有已知标签的扫描，减少xxl-job添加多个任务的麻烦
-      - 2.解耦扫描函数，传入关联app类型、数据结构体、及nuclei脚本地址，扫描有漏洞后根据ip、域名、关联app名称写入数据库
-      - 3.nuclei扫描结果不再输出到文件，直接每次扫描取扫描结果
+      - [add] 增加-sall参数，开启时候直接启动所有已知标签的扫描，减少xxl-job添加多个任务的麻烦
+      - [update] 解耦扫描函数，传入关联app类型、数据结构体、及nuclei脚本地址，扫描有漏洞后根据ip、域名、关联app名称写入数据库
+      - [update] nuclei扫描结果不再输出到文件，直接每次扫描取扫描结果
 
  - 2022-10-03
-    - 1.添加ip解析为网站及查询根域名权重功能
-    - 2.添加通过Server酱推送消息的代码
-    - 3.优化代码架构
+    - [add] 添加ip解析为网站及查询根域名权重功能
+    - [add] 添加通过Server酱推送消息的代码
+    - [update] 优化代码架构
 
- - 2022-09-21,更新代码架构，添加yongyou_nc的nuclei模版
+ - 2022-09-21
+    - [update] 更新代码架构，添加yongyou_nc的nuclei模版
 
- - 2022-09-18,首次添加扫描代码
+ - 2022-09-18
+    - [add] 首次添加代码

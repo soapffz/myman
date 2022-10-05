@@ -44,18 +44,13 @@ func init() {
 	viper.Unmarshal(&config) //将配置文件绑定到config上
 }
 
-func GetDataFromAsset(begin_time string, args_relatedapp_type string, scan_alltype_flag bool, db *gorm.DB) []db_model.BountyAsset {
+func GetDataFromAsset(begin_time string, args_relatedapp_type string, db *gorm.DB) []db_model.BountyAsset {
 	// 从资产数据中获取[从指定时间]开始的[指定标签]的数据
 	now_time := time.Now().Format("2006-01-02 15:04:05")
 	// var bountyasset db_model.BountyAsset
 	var bountyassets []db_model.BountyAsset
 	// begin_time = "2022-10-04 08:00:00" // 测试时取消这句注释，即可指定较早时间的数据
-	if scan_alltype_flag {
-		// 若传入的“扫描所有类型数据”为真，则获取指定时间内所有标签数据并返回
-		db.Where("createtime BETWEEN ? AND ?", begin_time, now_time).Find(&bountyassets)
-	} else {
-		db.Where("createtime BETWEEN ? AND ? AND relatedapp = ?", begin_time, now_time, args_relatedapp_type).Find(&bountyassets)
-	}
+	db.Where("createtime BETWEEN ? AND ? AND relatedapp = ?", begin_time, now_time, args_relatedapp_type).Find(&bountyassets)
 	return bountyassets
 }
 
@@ -78,44 +73,51 @@ func main() {
 	dbname := viper.GetString("mysql.dbname")     //数据库名
 	db := tools.ConnectMysqlDb(username, password, host, port, dbname)
 
-	// 读取推送消息的serverJ的key
+	// server酱推送的key
 	serverJkey := viper.GetString("serverJ.serverJkey")
 
-	// 查询数据库指定时间内是否有新数据插入，时间周期与xxl-job定时时间保持一致
-	xxljob_crontab_second := 600
+	// 初始化查询时间，默认与xxl-job定时时间保持一致，查询此时间范围段内插入的数据（更新的数据不好统计因为会持续更新）
+	xxljob_crontab_second := 3600
 	m, _ := time.ParseDuration("-1s")
 	m1 := time.Now().Add(time.Duration(xxljob_crontab_second) * m)
 	begin_time := m1.Format("2006-01-02 15:04:05")
-	asset_l := GetDataFromAsset(begin_time, args_relatedapp_type, scan_alltype_flag, db)
-	// 资产列表直接为结构体的数组，在漏洞扫描函数中得到漏洞url及对应解析资产后直接写入数据库
 
+	// 根据是否要扫描所有app的flag进行判断
+	if scan_alltype_flag {
+		// 如果要扫描所有app，则从配置文件中读取所有app的关键词及对应nuclei脚本扫描路径
+		relatedappandpocpath := viper.GetStringMap("relatedappandpocpath")
+		for k, v := range relatedappandpocpath {
+			relatedapp := k
+			relatedapp_nuclei_poc_path := viper.GetString("nuclei.nuclei_poc_dir_path") + v.(string)
+			asset_l := GetDataFromAsset(begin_time, relatedapp, db)
+			InitScanWithDataFromDb(db, asset_l, relatedapp, genrepoer_flag, serverJkey, relatedapp_nuclei_poc_path)
+		}
+	} else {
+		// 如果不扫描所有app，则根据输入的关联app从配置文件中读取nuclei扫描脚本文件
+		nuclei_poc_path := viper.GetString("relatedappandpocpath." + args_relatedapp_type)
+		if nuclei_poc_path == "" {
+			fmt.Println("获取对应app的nuclei扫描脚本失败，请检查配置文件")
+			os.Exit(0)
+		}
+		relatedapp_nuclei_poc_path := viper.GetString("nuclei.nuclei_poc_dir_path") + nuclei_poc_path
+		asset_l := GetDataFromAsset(begin_time, args_relatedapp_type, db)
+		InitScanWithDataFromDb(db, asset_l, args_relatedapp_type, genrepoer_flag, serverJkey, relatedapp_nuclei_poc_path)
+	}
+
+	// 资产列表直接为结构体的数组，在漏洞扫描函数中得到漏洞url及对应解析资产后直接写入数据库
+}
+
+func InitScanWithDataFromDb(db *gorm.DB, asset_l []db_model.BountyAsset, relatedapp string, genrepoer_flag bool, serverJkey string, poc_path string) {
 	if len(asset_l) > 0 {
-		fmt.Println("数据查询成功，共有" + strconv.Itoa(len(asset_l)) + "条数据")
-		nuclei_poc_dir_path := viper.GetString("nuclei.nuclei_poc_dir_path")
+		fmt.Println(relatedapp + " 数据查询成功，共有" + strconv.Itoa(len(asset_l)) + "条数据")
 
 		// 根据查询的app关键词不同，进入不同的扫描函数
 		for _, data := range asset_l {
 			relatedapp_type := data.Relatedapp
-			switch relatedapp_type {
-			case "yongyou_nc":
-				{
-					yongyou_nc_poc_path := nuclei_poc_dir_path + "/yongyou/yongyou-nc-beanshell-rce.yaml"
-					util_scans.ScanByNuclei(db, relatedapp_type, data, yongyou_nc_poc_path, genrepoer_flag, serverJkey)
-				}
-			case "fanwei_eoffice_v10":
-				{
-					fanwei_eoffice_v10_poc_path := nuclei_poc_dir_path + "/fanwei/fanwei-e-office-v10-fileupload.yaml"
-					util_scans.ScanByNuclei(db, relatedapp_type, data, fanwei_eoffice_v10_poc_path, genrepoer_flag, serverJkey)
-				}
-			default:
-				{
-					continue
-				}
-			}
-
+			util_scans.ScanByNuclei(db, relatedapp_type, data, poc_path, genrepoer_flag, serverJkey)
 		}
 	} else {
-		fmt.Println("查询无更新数据，请稍后再来～")
+		fmt.Println(relatedapp + " 查询无更新数据，请稍后再来～")
 		os.Exit(0)
 	}
 }

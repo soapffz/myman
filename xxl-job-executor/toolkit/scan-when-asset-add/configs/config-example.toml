@@ -14,3 +14,6 @@ nuclei_poc_dir_path = "/root/toolkit/myown-nuclei-poc"
 
 [serverJ]
 serverJkey = "xxxxxxxxxxxxxxxxx"
+
+[relatedappandpocpath]
+yongyou_nc = "/yongyou/yongyou-nc-beanshell-rce.yaml"
