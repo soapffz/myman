@@ -77,7 +77,7 @@ func main() {
 	serverJkey := viper.GetString("serverJ.serverJkey")
 
 	// 初始化查询时间，默认与xxl-job定时时间保持一致，查询此时间范围段内插入的数据（更新的数据不好统计因为会持续更新）
-	xxljob_crontab_second := 3600
+	xxljob_crontab_second := 600
 	m, _ := time.ParseDuration("-1s")
 	m1 := time.Now().Add(time.Duration(xxljob_crontab_second) * m)
 	begin_time := m1.Format("2006-01-02 15:04:05")
