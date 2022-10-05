@@ -16,54 +16,64 @@
 
 ## 🍣使用方法
 
-前置条件：在configs/文件夹中复制一份config-example.toml修改为config.toml，按照自己配置修改即可使用
+### 使用前置条件
 
-比[quake_go](https://github.com/360quake/quake_go)的使用方法多添加了两个参数
+1.需要已有按数据库模型[soapffz/myman/bounty_asset](https://github.com/soapffz/myman/blob/main/bounty-database/bounty_asset.sql)创建的bounty数据库及相应表
 
-```
--relatedapp,-rp,相关的app,与数据库模型中的relatedapp字段对应
+2.在configs/文件夹中复制一份config-example.toml修改为config.toml，按照自己配置修改
 
--downall_flag,-da，是否下载查询到的所有数据，默认为否，若开启单次最多下载10000条数据
-```
+### 快速使用方法
 
-完整使用方法：
+比[quake_go](https://github.com/360quake/quake_go)的使用方法多添加了三个参数
 
 ```
-usage: update_asset_by_quake [option] [args] [-da,downall_flag bool=false] [-e,end_time time=2022-10-03 20:02:51] [-fe,field string] [-ft,file_txt string] [-h,help bool] [-ic,ignore_cache bool=false] [-rp,relatedapp string] [-sz,size string=10] [-st,start string=0] [-s,start_time time=2022-01-01]
+-relatedapp,-rp,相关的app,与数据库模型中的relatedapp字段对应[用于单条查询]
+
+-downall_flag,-da，是否下载查询到的所有数据，默认为否，若开启单次最多下载10000条数据[用于单条查询和批量更新]
+
+--updateallapp_flag,-ua，是否更新配置文件中所有app，默认为否，若开启除-da参数外无视其他语句
+```
+
+ - 默认请求从今天的0点到使用时间的数据，若需自定义修改时间可注释掉源码中相关语句
+ - 使用search指定查询语句及-rp指定关联app时，默认请求10条数据，添加-da选项后每个app都下载当天的所有数据（最多10000条）
+ - 使用-ua参数更新config.toml文件中的所有app，默认请求10条数据，添加-da选项后每个app都下载当天的所有数据（最多10000条）
+
+额外提醒：
+ - 重复运行同一指令也不要怕
+   - quake对于同一语句多次查询的数据，只会对新查询的数据计算API调用次数
+   - 本程序使用[gorm](https://gorm.io/zh_CN/docs/index.html)库进行数据库插入时候会根据ip:port唯一联合索引处理重复
+
+
+### 完整参数
+
+```
+usage: update_asset_by_quake [option] [args] [-da,downall_flag bool=false] [-e,end_time time=2022-10-05 22:23:44] [-fe,field string] [-ft,file_txt string] [-h,help bool] [-ic,ignore_cache bool=false] [-rp,relatedapp string] [-sz,size string=10] [-st,start string=0] [-s,start_time time=2022-01-01] [-ua,updateallapp_flag bool=false]
 
 positional options:
-       option          [string]                    init,info,search,host
-       args            [string]                    query value,example port:443
+       option               [string]                    init,info,search,host
+       args                 [string]                    query value,example port:443
 
 options:
-  -da, --downall_flag  [bool=false]                -da download all data,default false
-   -e, --end_time      [time=2022-10-03 20:02:51]  -e time to end time flag
-  -fe, --field         [string]                    -fe swich body,title,host,html_hash,x_powered_by  to show infomation
-  -ft, --file_txt      [string]                    -ft ./file.txt file to query search
-   -h, --help          [bool]                      show usage
-  -ic, --ignore_cache  [bool=false]                -ic true or false,default false
-  -rp, --relatedapp    [string]                    -rp related app 
-  -sz, --size          [string=10]                 -sz to size number 
-  -st, --start         [string=0]                  -st to start number
-   -s, --start_time    [time=2022-01-01]           -s time flag , default time is time.now.year
+  -da, --downall_flag       [bool=false]                -da download all data,default false
+   -e, --end_time           [time=2022-10-05 22:23:44]  -e time to end time flag
+  -fe, --field              [string]                    -fe swich body,title,host,html_hash,x_powered_by  to show infomation
+  -ft, --file_txt           [string]                    -ft ./file.txt file to query search
+   -h, --help               [bool]                      show usage
+  -ic, --ignore_cache       [bool=false]                -ic true or false,default false
+  -rp, --relatedapp         [string]                    -rp related app 
+  -sz, --size               [string=10]                 -sz to size number 
+  -st, --start              [string=0]                  -st to start number
+   -s, --start_time         [time=2022-01-01]           -s time flag , default time is time.now.year
+  -ua, --updateallapp_flag  [bool=false]                -ua update all app by query_statement
 ```
-
-按自己配置填写configs/config-example.toml，修改文件名为config.toml
-
- - 默认请求从今天的0点到使用时间的数据，若需自定义修改时间请自己动手
- - 默认请求10条数据，开启-da(-downall_flag)选项后，下载查询到的所有数据（最多10000条）
- - 重复运行同一指令也不要怕，quake对于同一语句多次查询的数据，只会对新查询的数据计算API调用次数
- - 本程序使用[gorm](https://gorm.io/zh_CN/docs/index.html)库进行数据库插入时候会根据ip:port唯一联合索引处理重复
-
 
 ## 🎂演示截图
 
 ## 🥃更新日志
 
  - 2022-10-05
-    - 1.更新了一些小的测试用例
-    - 2.将单次最大下载放宽至10000条数据
-    - 3.不传入关联app关键词将提示，但不会阻止程序运行
+    - 1.[add] 新增-ua参数，一键更新配置中所有资产，配合-da下载所有数据参数，可一键下载并更新所有app的当日数据
+    - 2.[update] 更新了代码架构、一些小的测试用例，将单次最大下载放宽至10000条数据，不传入关联app关键词将提示，但不会阻止程序运行
 
  - 2022-10-02，根据[quake_go](https://github.com/360quake/quake_go)项目更改架构
     - 修复：根据原作者代码修改相关字段

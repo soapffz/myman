@@ -25,6 +25,7 @@ func QuakeGoHflagInit() {
 	hflag.AddPosFlag("option", "init,info,search,host")
 	hflag.AddPosFlag("args", "query value,example port:443", hflag.DefaultValue(""))
 	hflag.AddFlag("relatedapp", "-rp related app ", hflag.Shorthand("rp"), hflag.Type("string"), hflag.DefaultValue(""))
+	hflag.AddFlag("updateallapp_flag", "-ua update all app by query_statement ", hflag.Shorthand("ua"), hflag.Type("bool"), hflag.DefaultValue("false"))
 	hflag.AddFlag("downall_flag", "-da download all data,default false", hflag.Shorthand("da"), hflag.Type("bool"), hflag.DefaultValue("false"))
 	if err := hflag.Parse(); err != nil {
 		panic(err)

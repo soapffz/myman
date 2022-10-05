@@ -22,6 +22,7 @@ import (
 
 // 配置文件结构体
 type Config struct {
+	// 这里不一定需要所有配置都写全才能用viper读取
 	MySQL MySQLConfig
 }
 
@@ -66,72 +67,90 @@ func main() {
 		os.Exit(-1)
 	}
 
+	// 读取参数传入值，初始化
 	var reqjson utils.Reqjson
 	reqjson.Query = hflag.GetString("args")
+	reqjson.EndTime = hflag.GetTime("end_time")
+	reqjson.IgnoreCache = hflag.GetBool("ignore_cache")
+	reqjson.Field = hflag.GetString("field")
+	reqjson.QueryTxt = hflag.GetString("file_txt")
+	reqjson.StartTime = hflag.GetTime("start_time")
+	reqjson.Start = hflag.GetString("start")
+	reqjson.Size = hflag.GetString("size")
 
-	// 判断传入参数是否为空，为空则打印账号信息
-	if reqjson.Query == "" {
-		// 传入为空，则打印当前账号信息
-		info := utils.InfoGet(quake_token)
-		data_result, user_result := utils.InfoLoadJson(info)
-		fmt.Println("#用户名:", user_result["username"])
-		fmt.Println("#邮  箱:", user_result["email"])
-		fmt.Println("#手机:", data_result["mobile_phone"])
-		fmt.Println("#月度积分:", data_result["month_remaining_credit"])
-		fmt.Println("#长效积分:", data_result["constant_credit"])
-		fmt.Println("#Token:", data_result["token"])
+	downall_flag := hflag.GetBool("downall_flag")
+	updateallapp_flag := hflag.GetBool("updateallapp_flag")
+	relatedapp := hflag.GetString("relatedapp")
+
+	// 判断是否需要更新所有数据，若是，则忽略本次传入的其他所有语句
+	if updateallapp_flag {
+		// 如果指定了要更新所有app，则忽略其他查询语句，从读取配置文件中的kv查询语句
+		//k是关联app关键词，v是网络空间搜索引擎查询语句,根据v使用搜索引擎查询后，根据k在数据库中写入对应app的数据
+		quake_query_statement := viper.GetStringMap("quake_query_statement")
+		for k, v := range quake_query_statement {
+			relatedapp := k
+			reqjson.Query = v.(string)
+			InitQuakeReqjsonAndDownloadData(db, reqjson, downall_flag, quake_token, relatedapp)
+		}
 	} else {
-		// 根据传入参数内容进行查询
-		reqjson.EndTime = hflag.GetTime("end_time")
-		reqjson.IgnoreCache = hflag.GetBool("ignore_cache")
-		reqjson.Field = hflag.GetString("field")
-		reqjson.QueryTxt = hflag.GetString("file_txt")
+		// 如果没有指定要更新所有app，则根据传入语句进行判断
 
-		reqjson.StartTime = hflag.GetTime("start_time")
-		if reqjson.StartTime.Format("2006-01-02") == strconv.Itoa(time.Now().Year())+"-01-01" {
-			// 如果时间默认没有更改，则设置为从今天的0点开始
-			today := time.Now().Format("2006-01-02")
-			// yesday := time.Now().AddDate(0, 0, -1).Format("2006-01-02") // 测试时注释掉此语句则查询从昨天到现在的数据
-			// lastyear_today := time.Now().AddDate(-1, 0, 0).Format("2006-01-02") // 测试时注释掉此语句则查询去年今天到现在的数据
-			parsed, _ := time.Parse("2006-01-02", today)
-			reqjson.StartTime = parsed
-		}
-
-		relatedapp := hflag.GetString("relatedapp")
-		if relatedapp == "" {
-			fmt.Println("未传入关联app关键词，本次数据更新将不带标签！")
-		}
-
-		reqjson.Start = hflag.GetString("start")
-		reqjson.Size = hflag.GetString("size")
-		downall_flag := hflag.GetBool("downall_flag")
-		if !downall_flag {
-			body := utils.SearchServicePost(reqjson, quake_token)
-			parseQuekeGoDataAndWriteDb(db, reqjson, body, relatedapp)
+		if reqjson.Query == "" {
+			// 如果没有传入查询语句，则打印当前账号信息，并直接退出
+			info := utils.InfoGet(quake_token)
+			data_result, user_result := utils.InfoLoadJson(info)
+			fmt.Println("#用户名:", user_result["username"])
+			fmt.Println("#邮  箱:", user_result["email"])
+			fmt.Println("#手机:", data_result["mobile_phone"])
+			fmt.Println("#月度积分:", data_result["month_remaining_credit"])
+			fmt.Println("#长效积分:", data_result["constant_credit"])
+			fmt.Println("#Token:", data_result["token"])
 		} else {
-			reqjson.Size = "100"
-			reqjson.Start = "0"
-
-			// 如果要下载全部，则没批次设置下载100条数据，则最多循环10次，当单次下载的数据小于100时结束
-			for i := 0; i <= 100; i++ {
-				// 每次循环重置新的reqjson.Start
-				reqjson.Start = strconv.Itoa(i * 100)
-				body := utils.SearchServicePost(reqjson, quake_token)
-				if len(body) <= 121 {
-					// 此处还需要优化，暂时测试没有返回值的quake查询结果长度为121
-					break
-				}
-				// fmt.Println(len(body))
-				// 解析quake返回的数据并写入数据库
-				parseQuekeGoDataAndWriteDb(db, reqjson, body, relatedapp)
+			// 没有传入关联的app则提示没有传入app关联标签
+			if relatedapp == "" {
+				fmt.Println("未传入关联app关键词，本次数据更新将不带标签！")
 			}
-			// 对数据库进行处理，对于同一个ip+关联app出现5次以上的认为是蜜罐，将涉及该ip的数据全部删除掉并加入黑名单
-		}
 
+			InitQuakeReqjsonAndDownloadData(db, reqjson, downall_flag, quake_token, relatedapp)
+		}
 	}
 }
 
-func parseQuekeGoDataAndWriteDb(db *gorm.DB, reqjson utils.Reqjson, body string, relatedapp string) {
+func InitQuakeReqjsonAndDownloadData(db *gorm.DB, reqjson utils.Reqjson, downall_flag bool, quake_token string, relatedapp string) {
+	// 传入请求结构体及下载数据的flag等，下载数据
+	if reqjson.StartTime.Format("2006-01-02") == strconv.Itoa(time.Now().Year())+"-01-01" {
+		// 如果时间默认没有更改，则设置为从今天的0点开始
+		today := time.Now().Format("2006-01-02")
+		// yesday := time.Now().AddDate(0, 0, -1).Format("2006-01-02") // 测试时注释掉此语句则查询从昨天到现在的数据
+		// lastyear_today := time.Now().AddDate(-1, 0, 0).Format("2006-01-02") // 测试时注释掉此语句则查询去年今天到现在的数据
+		parsed, _ := time.Parse("2006-01-02", today)
+		reqjson.StartTime = parsed
+	}
+
+	if !downall_flag {
+		body := utils.SearchServicePost(reqjson, quake_token)
+		ParseQuekeGoDataAndWriteDb(db, reqjson, body, relatedapp)
+	} else {
+		reqjson.Size = "100"
+		reqjson.Start = "0"
+
+		// 如果要下载全部，则没批次设置下载100条数据，则最多循环100次，当单次下载的数据返回为空时跳出循环
+		for i := 0; i <= 100; i++ {
+			// 每次循环重置新的reqjson.Start
+			reqjson.Start = strconv.Itoa(i * 100)
+			body := utils.SearchServicePost(reqjson, quake_token)
+			if len(body) <= 130 {
+				// 此处还需要优化，暂时测试没有返回值的quake查询结果长度为121或122，取130作为测试值
+				break
+			}
+			// fmt.Println(len(body))
+			// 解析quake返回的数据并写入数据库
+			ParseQuekeGoDataAndWriteDb(db, reqjson, body, relatedapp)
+		}
+	}
+}
+
+func ParseQuekeGoDataAndWriteDb(db *gorm.DB, reqjson utils.Reqjson, body string, relatedapp string) {
 	// 通过每次命令查询后解析quake_go返回的数据，解析后放入数据库
 	// 此处如果有报错参考原项目的
 	dataResult := utils.RespLoadJson[utils.SearchJson](body).Data
@@ -143,17 +162,17 @@ func parseQuekeGoDataAndWriteDb(db *gorm.DB, reqjson utils.Reqjson, body string,
 			} else {
 				fmt.Println(value.IP + ":" + strconv.Itoa(value.Port) + "  " + value.Service.HTTP[reqjson.Field].(string))
 			}
-			writeRecord(db, value.IP, strconv.Itoa(value.Port), relatedapp)
+			WriteRecord(db, value.IP, strconv.Itoa(value.Port), relatedapp)
 		}
 	} else {
 		for _, value := range dataResult {
 			fmt.Println(value.IP + ":" + strconv.Itoa(value.Port))
-			writeRecord(db, value.IP, strconv.Itoa(value.Port), relatedapp)
+			WriteRecord(db, value.IP, strconv.Itoa(value.Port), relatedapp)
 		}
 	}
 }
 
-func writeRecord(db *gorm.DB, ip string, port string, relatedapp string) {
+func WriteRecord(db *gorm.DB, ip string, port string, relatedapp string) {
 	// 解析每条数据到实例上
 	var bountyasset db_model.BountyAsset
 	bountyasset.Ip = ip
