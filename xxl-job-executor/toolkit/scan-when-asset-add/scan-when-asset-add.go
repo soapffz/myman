@@ -118,6 +118,5 @@ func InitScanWithDataFromDb(db *gorm.DB, asset_l []db_model.BountyAsset, related
 		}
 	} else {
 		fmt.Println(relatedapp + " 查询无更新数据，请稍后再来～")
-		os.Exit(0)
 	}
 }
