@@ -127,11 +127,11 @@ func InitQuakeReqjsonAndDownloadData(db *gorm.DB, reqjson utils.Reqjson, downall
 	// 传入请求结构体及下载数据的flag等，下载数据
 	if reqjson.StartTime.Format("2006-01-02") == strconv.Itoa(time.Now().Year())+"-01-01" {
 		// 如果时间默认没有更改，则设置为从2个小时前到现在
-		h, _ := time.ParseDuration("-1h")
-		today_before_hours := time.Now().Add(2 * h).Format("2006-01-02 15:04:05")
+		// h, _ := time.ParseDuration("-1h")
+		today := time.Now().Format("2006-01-02")
 		// yesday := time.Now().AddDate(0, 0, -1).Format("2006-01-02") // 测试时注释掉此语句则查询从昨天到现在的数据
 		// lastyear_today := time.Now().AddDate(-1, 0, 0).Format("2006-01-02") // 测试时注释掉此语句则查询去年今天到现在的数据
-		parsed, _ := time.Parse("2006-01-02 15:04:05", today_before_hours)
+		parsed, _ := time.Parse("2006-01-02", today)
 		reqjson.StartTime = parsed
 	}
 

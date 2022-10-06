@@ -76,7 +76,6 @@ options:
 ## 🥃更新日志
 
  - 2022-10-06
-    - [update] 修改默认查询时间段为2小时前到当前时间内的数据，减轻每次查询导致的时延
     - [update] 更新了对于传入参数的判断逻辑[#4240d9e](https://github.com/soapffz/myman/commit/4240d9e0e0f1a9821a3e97c5e1d6e9f1314d8522)
 
  - 2022-10-05
