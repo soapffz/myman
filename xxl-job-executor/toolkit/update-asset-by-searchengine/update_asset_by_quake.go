@@ -94,9 +94,9 @@ func main() {
 		}
 	} else {
 		// 如果没有指定要更新所有app，则根据传入语句进行判断
-
-		if reqjson.Query == "" {
+		if reqjson.Query == "" && relatedapp == "" {
 			// 如果没有传入查询语句，则打印当前账号信息，并直接退出
+			fmt.Println("没有传入搜索语句也没传入关联app关键词，打印账号信息并退出")
 			info := utils.InfoGet(quake_token)
 			data_result, user_result := utils.InfoLoadJson(info)
 			fmt.Println("#用户名:", user_result["username"])
@@ -105,14 +105,21 @@ func main() {
 			fmt.Println("#月度积分:", data_result["month_remaining_credit"])
 			fmt.Println("#长效积分:", data_result["constant_credit"])
 			fmt.Println("#Token:", data_result["token"])
-		} else {
-			// 没有传入关联的app则提示没有传入app关联标签
-			if relatedapp == "" {
-				fmt.Println("未传入关联app关键词，本次数据更新将不带标签！")
-			}
-
-			InitQuakeReqjsonAndDownloadData(db, reqjson, downall_flag, quake_token, relatedapp)
+			os.Exit(0)
 		}
+		if relatedapp == "" {
+			// 没有传入关联的app则提示没有传入app关联标签
+			fmt.Println("未传入关联app关键词，本次数据更新将不带标签！")
+		}
+		if reqjson.Query == "" {
+			// 没有传入直接搜索语句则提示没有传入搜索语句
+			fmt.Println("没有传入搜索语句，将尝试使用标签进行查询")
+			reqjson.Query = viper.GetString("quake_query_statement." + relatedapp)
+		}
+
+		// 经过逻辑判断，此处reqjson.Query 传入直接输入的查询语句或经关联app搜索到的查询语句
+		// 关联app不一定传入，未传入关联app时会提示本次数据更新不带标签
+		InitQuakeReqjsonAndDownloadData(db, reqjson, downall_flag, quake_token, relatedapp)
 	}
 }
 
