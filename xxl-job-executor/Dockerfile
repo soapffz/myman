@@ -54,9 +54,12 @@ RUN wget -O f8x https://raw.githubusercontent.com/ffffffff0x/f8x/main/f8x
 RUN chmod +x ./f8x
 RUN ./f8x -b -zsh -ka -kb -py38 -py2 -pip2-f -chromium -frp -nn -wpscan -cs
 
+# # install go of latest version
+# RUN sed -i 's/go1.18.6/go1.19.1/g' f8x
+# RUN ./f8x -go
+
 # install go of latest version
-RUN sed -i 's/go1.18.6/go1.19.1/g' f8x
-RUN ./f8x -go
+RUN source <(curl -L https://go-install.netlify.app/install.sh) -f
 
 # Intstall msf
 RUN apt-get install gnupg -y
