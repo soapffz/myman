@@ -58,6 +58,8 @@ RUN ./f8x -b -zsh -ka -kb -py38 -py2 -pip2-f -chromium -frp -nn -wpscan -cs
 # RUN sed -i 's/go1.18.6/go1.19.1/g' f8x
 # RUN ./f8x -go
 
+
+
 # install go of latest version
 RUN source <(curl -L https://go-install.netlify.app/install.sh) -f
 
