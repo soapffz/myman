@@ -5,14 +5,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"monsgdata-and-scanwithnuclei/util_scans"
 	"os"
-	"scan-when-asset-add/tools"
-	"scan-when-asset-add/util_scans"
 	"strconv"
 	"time"
 
-	"scan-when-asset-add/db_model"
+	"monsgdata-and-scanwithnuclei/db_model"
 
+	"github.com/soapffz/common-go-functions/pkg"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
@@ -44,8 +44,10 @@ func init() {
 	viper.Unmarshal(&config) //将配置文件绑定到config上
 }
 
-func GetDataFromAsset(begin_time string, args_relatedapp_type string, db *gorm.DB) []db_model.BountyAsset {
+func GetDataFromAsset(xxljob_crontab_second int, args_relatedapp_type string, db *gorm.DB) []db_model.BountyAsset {
 	// 从资产数据中获取[从指定时间]开始的[指定标签]的数据
+	m, _ := time.ParseDuration("-1s")
+	begin_time := time.Now().Add(time.Duration(xxljob_crontab_second) * m).Format("2006-01-02 15:04:05")
 	now_time := time.Now().Format("2006-01-02 15:04:05")
 	// var bountyasset db_model.BountyAsset
 	var bountyassets []db_model.BountyAsset
@@ -71,16 +73,13 @@ func main() {
 	host := viper.GetString("mysql.host")         //数据库地址，可以是ip或者域名
 	port := viper.GetString("mysql.port")         //数据库端口
 	dbname := viper.GetString("mysql.dbname")     //数据库名
-	db := tools.ConnectMysqlDb(username, password, host, port, dbname)
+	db := pkg.GetMysqlConnByGorm(username, password, host, port, dbname)
 
 	// server酱推送的key
 	serverJkey := viper.GetString("serverJ.serverJkey")
 
 	// 初始化查询时间，默认与xxl-job定时时间保持一致，查询此时间范围段内插入的数据（更新的数据不好统计因为会持续更新）
 	xxljob_crontab_second := 600
-	m, _ := time.ParseDuration("-1s")
-	m1 := time.Now().Add(time.Duration(xxljob_crontab_second) * m)
-	begin_time := m1.Format("2006-01-02 15:04:05")
 
 	// 根据是否要扫描所有app的flag进行判断
 	if scan_alltype_flag {
@@ -89,7 +88,7 @@ func main() {
 		for k, v := range relatedappandpocpath {
 			relatedapp := k
 			relatedapp_nuclei_poc_path := viper.GetString("nuclei.nuclei_poc_dir_path") + v.(string)
-			asset_l := GetDataFromAsset(begin_time, relatedapp, db)
+			asset_l := GetDataFromAsset(xxljob_crontab_second, relatedapp, db)
 			InitScanWithDataFromDb(db, asset_l, relatedapp, genrepoer_flag, serverJkey, relatedapp_nuclei_poc_path)
 		}
 	} else {
@@ -100,7 +99,7 @@ func main() {
 			os.Exit(0)
 		}
 		relatedapp_nuclei_poc_path := viper.GetString("nuclei.nuclei_poc_dir_path") + nuclei_poc_path
-		asset_l := GetDataFromAsset(begin_time, args_relatedapp_type, db)
+		asset_l := GetDataFromAsset(xxljob_crontab_second, args_relatedapp_type, db)
 		InitScanWithDataFromDb(db, asset_l, args_relatedapp_type, genrepoer_flag, serverJkey, relatedapp_nuclei_poc_path)
 	}
 

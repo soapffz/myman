@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"scan-when-asset-add/db_model"
+	"monsgdata-and-scanwithnuclei/db_model"
 
 	"github.com/soapffz/common-go-functions/pkg"
 	"gorm.io/gorm"

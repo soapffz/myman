@@ -1,7 +1,7 @@
 package util_scans
 
 import (
-	"scan-when-asset-add/db_model"
+	"monsgdata-and-scanwithnuclei/db_model"
 
 	"gorm.io/gorm"
 )
