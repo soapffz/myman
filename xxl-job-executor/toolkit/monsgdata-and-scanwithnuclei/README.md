@@ -8,7 +8,7 @@
 
 ## 🥩模块功能
 
-原理简述：监测从[pdata-by-searchengine](https://github.com/soapffz/myman/tree/main/xxl-job-executor/toolkit/updata-by-searchengine)模块中更新的网络空间搜索引擎数据，并使用nuclei扫描
+原理简述：监测从[updata-by-searchengine](https://github.com/soapffz/myman/tree/main/xxl-job-executor/toolkit/updata-by-searchengine)模块中更新的网络空间搜索引擎数据，并使用nuclei扫描
 
 配合[xxl-job-executor](https://github.com/soapffz/myman/tree/main/xxl-job-executor)设置定时任务可实现自动化完成资产扫描并生成报告方便提交
 
