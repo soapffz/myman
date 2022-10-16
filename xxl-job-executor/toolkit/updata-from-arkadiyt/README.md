@@ -8,7 +8,7 @@
 
 ## 🥐模块功能
 
-监测arkadiyt/bounty-targets-data资产信息变动
+监测[arkadiyt/bounty-targets-data](https://github.com/arkadiyt/bounty-targets-data)资产信息变动
 
 原理简述：定时拉取[arkadiyt/bounty-targets-data](https://github.com/arkadiyt/bounty-targets-data)，使用git获取最新一次变动的时间及文件，解析对应变动的文件更新到数据库中
 
