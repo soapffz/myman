@@ -1,0 +1,5 @@
+bounty-targets-data
+bounty-targets-data/*
+configs/config.toml
+*.DS_Store
+*.txt

@@ -1,16 +1,17 @@
-module update-wildcard-domain
+module updata-from-arkadiyt
 
-go 1.18
+go 1.19
 
 require (
-	github.com/Andrew-M-C/go.jsonvalue v1.3.1
+	github.com/Andrew-M-C/go.jsonvalue v1.3.2
+	github.com/soapffz/common-go-functions/pkg v0.0.0-20221016084236-874e61fedf53
 	github.com/spf13/viper v1.13.0
 	github.com/thinkeridea/go-extend v1.3.2
-	gorm.io/driver/mysql v1.3.6
-	gorm.io/gorm v1.23.8
+	gorm.io/gorm v1.24.0
 )
 
 require (
+	github.com/Cgboal/DomainParser v0.0.0-20210827145802-99068439e39f // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
@@ -31,4 +32,5 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gorm.io/driver/mysql v1.4.1 // indirect
 )
