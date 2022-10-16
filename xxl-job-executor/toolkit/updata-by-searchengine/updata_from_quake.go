@@ -10,11 +10,12 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"update-asset-by-searchengine/db_model"
-	"update-asset-by-searchengine/tools"
+	"updata-by-searchengine/db_model"
+	"updata-by-searchengine/tools"
 
 	"github.com/360quake/quake_go/utils"
 	"github.com/hpifu/go-kit/hflag"
+	"github.com/soapffz/common-go-functions/pkg"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -57,7 +58,7 @@ func main() {
 	host := viper.GetString("mysql.host")         //数据库地址，可以是ip或者域名
 	port := viper.GetString("mysql.port")         //数据库端口
 	dbname := viper.GetString("mysql.dbname")     //数据库名
-	db := tools.ConnectMysqlDb(username, password, host, port, dbname)
+	db := pkg.GetMysqlConnByGorm(username, password, host, port, dbname)
 
 	// 初始化quakego命令行参数解析
 	tools.QuakeGoHflagInit()
@@ -170,28 +171,28 @@ func ParseQuekeGoDataAndWriteDb(db *gorm.DB, reqjson utils.Reqjson, body string,
 			} else {
 				fmt.Println(value.IP + ":" + strconv.Itoa(value.Port) + "  " + value.Service.HTTP[reqjson.Field].(string))
 			}
-			WriteRecord(db, value.IP, strconv.Itoa(value.Port), relatedapp)
+			WriteSerachEngineAsset(db, value.IP, strconv.Itoa(value.Port), relatedapp)
 		}
 	} else {
 		for _, value := range dataResult {
 			fmt.Println(value.IP + ":" + strconv.Itoa(value.Port))
-			WriteRecord(db, value.IP, strconv.Itoa(value.Port), relatedapp)
+			WriteSerachEngineAsset(db, value.IP, strconv.Itoa(value.Port), relatedapp)
 		}
 	}
 }
 
-func WriteRecord(db *gorm.DB, ip string, port string, relatedapp string) {
+func WriteSerachEngineAsset(db *gorm.DB, ip string, port string, relatedapp string) {
 	// 解析每条数据到实例上
-	var bountyasset db_model.BountyAsset
-	bountyasset.Ip = ip
-	bountyasset.Port = port
-	bountyasset.Relatedapp = relatedapp
+	var searchengineasset db_model.SeacrhEngineAsset
+	searchengineasset.Ip = ip
+	searchengineasset.Port = port
+	searchengineasset.Relatedapp = relatedapp
 	// 插入数据库
 	res := db.Clauses(clause.OnConflict{
 		// ID发生冲突时候，根据ip和port索引唯一，更新updatetime
 		Columns:   []clause.Column{{Name: "ip"}, {Name: "port"}},
 		DoUpdates: clause.AssignmentColumns([]string{"updatetime"}),
-	}).Create(&bountyasset)
+	}).Create(&searchengineasset)
 	// 排除ID冲突错误错误后，将其他错误（字段冲突）打印出来
 	if res.Error != nil && !strings.Contains(res.Error.Error(), "unique constraint") {
 		log.Println("插入出错" + res.Error.Error())

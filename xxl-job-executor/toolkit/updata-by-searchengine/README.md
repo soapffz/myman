@@ -1,12 +1,15 @@
 # 🚁update-asset-by-searchengine，使用搜索引擎监控资产更新
 
-## 简介
+## 🌚简介
 
-🌟一款[soapffz](https://github.com/soapffz)个人自用的漏扫及告警流程，用于批量刷洞
+🌟一款[soapffz](https://github.com/soapffz)自用的漏洞赏金资产监测及信息收集框架，基于分布式任务框架[xxl-job-executor](https://github.com/soapffz/myman/tree/main/xxl-job-executor)，愿景是自动化实现赏金资产的监测及前期信息收集
+
+可能会有部分漏扫功能，在开始使用之前，请务必阅读并同意[免责声明](https://github.com/soapffz/myman/blob/main/Disclaimer.md)中的条款，否则请勿下载安装使用本项目中的所有文件
+
 
 ## 🥐模块功能
 
-从网络空间搜索引擎下载每日更新数据更新到数据库，数据库模型为[soapffz/myman/bounty_asset](https://github.com/soapffz/myman/blob/main/bounty-database/bounty_asset.sql)
+原理简述：从网络空间搜索引擎下载每日更新数据更新到数据库
 
 目前使用[360quake](https://quake.360.cn/quake/#/index)API进行数据查询
 
@@ -14,14 +17,12 @@
 
  - 获取到没有的ip:port时则插入，已存在的数据则更新时间(设置了ip:port唯一联合索引)
 
+
 ## 🍣使用方法
 
-### 🪷使用前置条件
-
-1.需要已有按数据库模型[soapffz/myman/bounty_asset](https://github.com/soapffz/myman/blob/main/bounty-database/bounty_asset.sql)创建的bounty数据库及相应表
-
-2.在configs/文件夹中复制一份config-example.toml修改为config.toml，按照自己配置修改
-
+前置条件：
+   1. 在mysql数据库中导入[db_model/searchengine_asset_model.sql](https://github.com/soapffz/myman/tree/main/xxl-job-executor/toolkit/updata-by-searchengine/db_model/searchengine_asset_model.sql)文件
+   2. 在[configs](https://github.com/soapffz/myman/tree/main/xxl-job-executor/toolkit/updata-by-searchengine/configs/)文件夹中复制一份`config-example.toml`修改为`config.toml`，按照自己配置修改即可使用
 
 
 ### 🌹快速使用方法
@@ -74,6 +75,11 @@ options:
 ## 🎂演示截图
 
 ## 🥃更新日志
+
+ - 2022-10-16
+    - [update] 模块从`update-asset-by-searchengine`更名为`updata-by-searchengine`
+    - [update] 去掉connectmysqldb模块（已集成到[soapffz/common-go-functions](https://github.com/soapffz/common-go-functions/blob/main/pkg/getmysqldbconnbygorm.go)）模块中
+    - [update] 优化数据创表文件并放到本模块中
 
  - 2022-10-06
     - [update] 更新了对于传入参数的判断逻辑[#4240d9e](https://github.com/soapffz/myman/commit/4240d9e0e0f1a9821a3e97c5e1d6e9f1314d8522)
