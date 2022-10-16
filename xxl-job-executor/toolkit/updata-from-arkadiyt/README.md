@@ -4,7 +4,7 @@
 
 🌟一款[soapffz](https://github.com/soapffz)自用的漏洞赏金资产监测及信息收集框架，基于分布式任务框架[xxl-job-executor](https://github.com/soapffz/myman/tree/main/xxl-job-executor)，愿景是自动化实现赏金资产的监测及前期信息收集
 
-可能会有部分漏扫功能，在开始使用之前，请务必阅读并同意[免责声明](https://github.com/soapffz/myman/blob/master/Disclaimer.md)中的条款，否则请勿下载安装使用本项目中的所有文件
+可能会有部分漏扫功能，在开始使用之前，请务必阅读并同意[免责声明](https://github.com/soapffz/myman/blob/main/Disclaimer.md)中的条款，否则请勿下载安装使用本项目中的所有文件
 
 ## 🥐模块功能
 
