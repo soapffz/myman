@@ -60,6 +60,11 @@ func main() {
 	dbname := viper.GetString("mysql.dbname")     //数据库名
 	db := pkg.GetMysqlConnByGorm(username, password, host, port, dbname)
 
+	//把模型与数据库中的表对应起来
+	if e := db.AutoMigrate(&db_model.SeacrhEngineAsset{}); e != nil {
+		log.Fatalln(e.Error())
+	}
+
 	// 初始化quakego命令行参数解析
 	tools.QuakeGoHflagInit()
 	quake_token := viper.GetString("quake.quakekey")
