@@ -1,4 +1,4 @@
-# 🚁updata-from-arkdiyt，检测arkadiyt/bounty-targets-data资产信息变动
+# 🚁updata-from-arkdiyt
 
 ## 简介
 
@@ -7,6 +7,8 @@
 可能会有部分漏扫功能，在开始使用之前，请务必阅读并同意[免责声明](https://github.com/soapffz/myman/blob/main/Disclaimer.md)中的条款，否则请勿下载安装使用本项目中的所有文件
 
 ## 🥐模块功能
+
+监测arkadiyt/bounty-targets-data资产信息变动
 
 原理简述：定时拉取[arkadiyt/bounty-targets-data](https://github.com/arkadiyt/bounty-targets-data)，使用git获取最新一次变动的时间及文件，解析对应变动的文件更新到数据库中
 
@@ -37,7 +39,8 @@ xxl-job调度任务截图-2022年9月10日
 ## 🍝更新日志
 
  - 2022-10-16
-    - [update]项目由update-wildcard-domain只监测[bounty-targets-data](https://github.com/arkadiyt/bounty-targets-data)库中的[wildcards.txt](https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/main/data/wildcards.txt)通配符文件变为监测整个项目，重新设计数据库文件，根据git文件获取提交的时间，配合xxl-job定时任务,解析对应资产到数据库中
+    - [update] 项目由update-wildcard-domain只监测[bounty-targets-data](https://github.com/arkadiyt/bounty-targets-data)库中的[wildcards.txt](https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/main/data/wildcards.txt)通配符文件变为监测整个项目,根据git文件获取提交的时间，配合xxl-job定时任务,解析对应资产到数据库中
+    - [update] 重新设计数据库文件并添加到本项目中
 
  - 2022-09-10
     - [add] 首次添加代码，功能为从[bounty-targets-data](https://github.com/arkadiyt/bounty-targets-data)库中的[wildcards.txt](https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/main/data/wildcards.txt)文件中监测更新通配符域名
