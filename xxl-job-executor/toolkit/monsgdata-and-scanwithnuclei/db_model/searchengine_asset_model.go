@@ -21,5 +21,5 @@ type SeacrhEngineAsset struct {
 }
 
 func (SeacrhEngineAsset) TabName() string {
-	return "bounty_asset"
+	return "searchengine_asset"
 }

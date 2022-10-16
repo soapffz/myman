@@ -5,6 +5,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"monsgdata-and-scanwithnuclei/util_scans"
 	"os"
 	"strconv"
@@ -50,10 +51,10 @@ func GetDataFromAsset(xxljob_crontab_second int, args_relatedapp_type string, db
 	begin_time := time.Now().Add(time.Duration(xxljob_crontab_second) * m).Format("2006-01-02 15:04:05")
 	now_time := time.Now().Format("2006-01-02 15:04:05")
 	// var bountyasset db_model.SeacrhEngineAsset
-	var bountyassets []db_model.SeacrhEngineAsset
+	var seacrhengineasset []db_model.SeacrhEngineAsset
 	// begin_time = "2022-10-04 08:00:00" // 测试时取消这句注释，即可指定较早时间的数据
-	db.Where("createtime BETWEEN ? AND ? AND relatedapp = ?", begin_time, now_time, args_relatedapp_type).Find(&bountyassets)
-	return bountyassets
+	db.Where("createtime BETWEEN ? AND ? AND relatedapp = ?", begin_time, now_time, args_relatedapp_type).Find(&seacrhengineasset)
+	return seacrhengineasset
 }
 
 var args_relatedapp_type = flag.String("vp", "", "对应的app关键词，需与数据库中相同")
@@ -74,6 +75,11 @@ func main() {
 	port := viper.GetString("mysql.port")         //数据库端口
 	dbname := viper.GetString("mysql.dbname")     //数据库名
 	db := pkg.GetMysqlConnByGorm(username, password, host, port, dbname)
+
+	//把模型与数据库中的表对应起来
+	if e := db.AutoMigrate(&db_model.SeacrhEngineAsset{}); e != nil {
+		log.Fatalln(e.Error())
+	}
 
 	// server酱推送的key
 	serverJkey := viper.GetString("serverJ.serverJkey")
