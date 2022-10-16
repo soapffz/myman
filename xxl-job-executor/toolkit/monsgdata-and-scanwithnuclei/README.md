@@ -18,15 +18,6 @@
    1. 在mysql数据库中导入[db_model/searchengine_asset_model.sql](https://github.com/soapffz/myman/tree/main/xxl-job-executor/toolkit/monsgdata-and-scanwithnuclei/db_model/searchengine_asset_model.sql)文件
    2. 在[configs](https://github.com/soapffz/myman/tree/main/xxl-job-executor/toolkit/monsgdata-and-scanwithnuclei/configs/)文件夹中复制一份`config-example.toml`修改为`config.toml`，按照自己配置修改即可使用
 
-
-### 🪷使用前置条件
-
-1.需要已有按数据库模型[soapffz/myman/bounty_asset](https://github.com/soapffz/myman/blob/main/bounty-database/bounty_asset.sql)创建的bounty数据库及相应表
-
-2.在configs/文件夹中复制一份config-example.toml修改为config.toml，按照自己配置修改
-
-
-
 ### 🌹快速使用方法
 
 ```

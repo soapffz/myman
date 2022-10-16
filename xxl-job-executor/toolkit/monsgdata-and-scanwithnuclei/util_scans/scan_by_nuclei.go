@@ -13,8 +13,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func ScanByNuclei(db *gorm.DB, args_relatedapp_type string, data db_model.BountyAsset, poc_path string, genrepoer_flag bool, serverJkey string) {
-	// 传入的是每个bountyasset结构体
+func ScanByNuclei(db *gorm.DB, args_relatedapp_type string, data db_model.SeacrhEngineAsset, poc_path string, genrepoer_flag bool, serverJkey string) {
+	// 传入的是每个SeacrhEngineAsset结构体
 	// 使用对应漏洞类型的nuclei模版进行漏扫，扫完后有漏洞url的进行域名解析及权重查询，写进数据库
 
 	// 取出ip和端口组合成链接

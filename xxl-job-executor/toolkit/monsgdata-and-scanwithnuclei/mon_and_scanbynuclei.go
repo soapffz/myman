@@ -44,13 +44,13 @@ func init() {
 	viper.Unmarshal(&config) //将配置文件绑定到config上
 }
 
-func GetDataFromAsset(xxljob_crontab_second int, args_relatedapp_type string, db *gorm.DB) []db_model.BountyAsset {
+func GetDataFromAsset(xxljob_crontab_second int, args_relatedapp_type string, db *gorm.DB) []db_model.SeacrhEngineAsset {
 	// 从资产数据中获取[从指定时间]开始的[指定标签]的数据
 	m, _ := time.ParseDuration("-1s")
 	begin_time := time.Now().Add(time.Duration(xxljob_crontab_second) * m).Format("2006-01-02 15:04:05")
 	now_time := time.Now().Format("2006-01-02 15:04:05")
-	// var bountyasset db_model.BountyAsset
-	var bountyassets []db_model.BountyAsset
+	// var bountyasset db_model.SeacrhEngineAsset
+	var bountyassets []db_model.SeacrhEngineAsset
 	// begin_time = "2022-10-04 08:00:00" // 测试时取消这句注释，即可指定较早时间的数据
 	db.Where("createtime BETWEEN ? AND ? AND relatedapp = ?", begin_time, now_time, args_relatedapp_type).Find(&bountyassets)
 	return bountyassets
@@ -106,7 +106,7 @@ func main() {
 	// 资产列表直接为结构体的数组，在漏洞扫描函数中得到漏洞url及对应解析资产后直接写入数据库
 }
 
-func InitScanWithDataFromDb(db *gorm.DB, asset_l []db_model.BountyAsset, relatedapp string, genrepoer_flag bool, serverJkey string, poc_path string) {
+func InitScanWithDataFromDb(db *gorm.DB, asset_l []db_model.SeacrhEngineAsset, relatedapp string, genrepoer_flag bool, serverJkey string, poc_path string) {
 	if len(asset_l) > 0 {
 		fmt.Println(relatedapp + " 数据查询成功，共有" + strconv.Itoa(len(asset_l)) + "条数据")
 

@@ -2,7 +2,7 @@ package db_model
 
 import "time"
 
-type BountyAsset struct {
+type SeacrhEngineAsset struct {
 	ID         int64     `gorm:"primary_key;column:id;type:bigint(20) unsigned;not null;autoIncrementIncrement:1"` // ID主键，自增步长为1
 	Ip         string    `gorm:"index:index_asset;ccolumn:ip;type:varchar(255)"`                                   //  资产ip
 	Port       string    `gorm:"index:index_asset;column:port;type:varchar(255)"`                                  //  资产端口
@@ -20,6 +20,6 @@ type BountyAsset struct {
 	UpdatedAt  time.Time `gorm:"column:updatetime"`                                                                //  更新时间
 }
 
-func (BountyAsset) TabName() string {
+func (SeacrhEngineAsset) TabName() string {
 	return "bounty_asset"
 }
