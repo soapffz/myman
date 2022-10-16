@@ -85,8 +85,8 @@ func main() {
 	}
 
 	// 临时测试用
-	utilsofparsedata.UpdateIntigritiData(db, serverJkey)
-	os.Exit(0)
+	// utilsofparsedata.UpdateIntigritiData(db, serverJkey)
+	// os.Exit(0)
 
 	// 监测拉取arkadiyt数据后获取最新一次变动的文件
 	// 初始化查询时间，默认与xxl-job定时时间保持一致，查询此时间范围内变动的文件（与git日志比较）
