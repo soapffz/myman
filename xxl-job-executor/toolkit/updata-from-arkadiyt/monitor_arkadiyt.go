@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"updata-from-arkadiyt/db_model"
 	"updata-from-arkadiyt/utilsofparsedata"
 
 	"github.com/soapffz/common-go-functions/pkg"
@@ -90,7 +91,7 @@ func main() {
 
 	// 监测拉取arkadiyt数据后获取最新一次变动的文件
 	// 初始化查询时间，默认与xxl-job定时时间保持一致，查询此时间范围内变动的文件（与git日志比较）
-	xxljob_crontab_second := 1800
+	xxljob_crontab_second := 36000
 	chagedsFileL := GetArkadiytDataChangeFiles(serverJkey, xxljob_crontab_second)
 	// fmt.Println(chagedsFileL)
 
@@ -101,14 +102,26 @@ func main() {
 			case "hackerone":
 				// 更新Hackerone Data
 				log.Println("[Warn] 监测到Hackerone数据更新，正在解析到数据库中..")
+				//把模型与数据库中的表对应起来
+				if e := db.AutoMigrate(&db_model.ArkadiytHackerone{}); e != nil {
+					log.Fatalln(e.Error())
+				}
 				utilsofparsedata.UpdateH1Data(db, serverJkey)
 			case "bugcrowd":
 				// 更新BugCrowd Data
 				log.Println("[Warn] 监测到BugCrowd数据更新，正在解析到数据库中..")
+				//把模型与数据库中的表对应起来
+				if e := db.AutoMigrate(&db_model.ArkadiytBugcrowd{}); e != nil {
+					log.Fatalln(e.Error())
+				}
 				utilsofparsedata.UpdateBugCrowdData(db, serverJkey)
 			case "intigriti":
 				// 更新Intigriti Data
 				log.Println("[Warn] 监测到Intigriti数据更新，正在解析到数据库中..")
+				//把模型与数据库中的表对应起来
+				if e := db.AutoMigrate(&db_model.ArkadiytIntigriti{}); e != nil {
+					log.Fatalln(e.Error())
+				}
 				utilsofparsedata.UpdateIntigritiData(db, serverJkey)
 			default:
 				log.Println("[Info] 暂时没有获取到新的文件变更")
