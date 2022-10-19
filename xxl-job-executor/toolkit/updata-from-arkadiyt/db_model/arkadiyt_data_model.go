@@ -53,7 +53,7 @@ type ArkadiytBugcrowd struct {
 	Target            string    `gorm:"column:target"`            //  子项目目标
 	CreatedAt         time.Time `gorm:"column:createtime"`        //  创建时间
 	UpdatedAt         time.Time `gorm:"column:updatetime"`        //  更新时间
-	Activemark        int64     `gorm:"column:activemark"`        //  资产是否有效，默认1为有效，失效则置为0
+	Activemark        bool      `gorm:"column:activemark"`        //  资产是否有效，默认1为有效，失效则置为0
 	Addsource         string    `gorm:"column:addsource"`         //  添加来源,默认为bounty-targets-data
 }
 
@@ -81,10 +81,26 @@ type ArkadiytIntigriti struct {
 	Description          string    `gorm:"column:description"`          //  子项目描述
 	CreatedAt            time.Time `gorm:"column:createtime"`           //  创建时间
 	UpdatedAt            time.Time `gorm:"column:updatetime"`           //  更新时间
-	Activemark           int64     `gorm:"column:activemark"`           //  资产是否有效，默认1为有效，失效则置为0
+	Activemark           bool      `gorm:"column:activemark"`           //  资产是否有效，默认1为有效，失效则置为0
 	Addsource            string    `gorm:"column:addsource"`            //  添加来源,默认为bounty-targets-data
 }
 
 func (ArkadiytIntigriti) TableName() string {
 	return "arkadiyt_intigriti"
+}
+
+// wilrcard
+type ArkadiytWildcard struct {
+	ID                   int64     `gorm:"column:id"`                   //  自增id，因为原数据中已经有id字段了
+	Rootdomainofwildcard string    `gorm:"column:rootdomainofwildcard"` //  通配符域名的根域名（有些通配符域名是二级域名）
+	Wildcarddomain       string    `gorm:"column:wildcarddomain"`       //  通配符域名
+	Blackflag            bool      `gorm:"column:blackflag"`            //  域名黑名单标记，0为正常，1为黑名单，默认为0
+	CreatedAt            time.Time `gorm:"column:createtime"`           //  创建时间
+	UpdatedAt            time.Time `gorm:"column:updatetime"`           //  更新时间
+	Activemark           bool      `gorm:"column:activemark"`           //  资产是否有效，默认1为有效，失效则置为0
+	Addsource            string    `gorm:"column:addsource"`            //  添加来源,默认为bounty-targets-data
+}
+
+func (ArkadiytWildcard) TableName() string {
+	return "arkadiyt_wildcard"
 }

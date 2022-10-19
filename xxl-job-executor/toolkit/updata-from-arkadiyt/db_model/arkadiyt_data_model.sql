@@ -82,6 +82,26 @@ CREATE TABLE if not exists `arkadiyt_intigriti` (
   PRIMARY KEY (`uid`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
+CREATE TABLE if not exists `arkadiyt_wildcard` (
+  `id` integer NOT NULL AUTO_INCREMENT COMMENT '自增id，因为原数据中已经有id字段了',
+  `rootdomainofwildcard` varchar(255) NULL COMMENT '通配符域名的根域名（有些通配符域名是二级域名）',
+  `wildcarddomain` varchar(255) unique NULL COMMENT '通配符域名',
+  `blackflag` tinyint(1) NULL DEFAULT 0 COMMENT '域名黑名单标记，0为正常，1为黑名单，默认为0',
+  `createtime` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updatetime` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `activemark` tinyint(1) NULL DEFAULT 1 COMMENT '资产是否有效，默认1为有效，失效则置为0',
+  `addsource` varchar(255) NULL DEFAULT "bounty-targets-data" COMMENT '添加来源,默认为bounty-targets-data',
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+# 每次执行都删除索引再重建
+# hackerone
+DROP INDEX index_h1 ON arkadiyt_hackerone;
+# bugcorwd
+DROP INDEX index_bc ON arkadiyt_bugcrowd;
+# intigriti
+DROP INDEX index_ig on arkadiyt_intigriti;
+
 # 设置唯一联合索引，保证字段唯一
 # hackerone
 alter table
@@ -242,6 +262,29 @@ VALUES
     "url",
     "soapffz.com",
     null,
+    NOW(),
+    NOW(),
+    0,
+    "soapffz测试数据"
+  );
+
+INSERT
+  IGNORE INTO `arkadiyt_wildcard`(
+    `id`,
+    `rootdomainofwildcard`,
+    `wildcarddomain`,
+    `blackflag`,
+    `createtime`,
+    `updatetime`,
+    `activemark`,
+    `addsource`
+  )
+VALUES
+  (
+    1,
+    "baidu.com",
+    "wenku.baidu.com",
+    1,
     NOW(),
     NOW(),
     0,

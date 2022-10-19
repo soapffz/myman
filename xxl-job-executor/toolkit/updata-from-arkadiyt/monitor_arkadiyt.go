@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"sync"
 	"time"
 	"updata-from-arkadiyt/db_model"
 	"updata-from-arkadiyt/utilsofparsedata"
@@ -54,8 +53,6 @@ func SubStrRuneSubString(s string, bg_index int, length int) string {
 	return exutf8.RuneSubString(s, bg_index, length)
 }
 
-var wg sync.WaitGroup
-
 func main() {
 	// 初始化后返回数据库链接
 	username := viper.GetString("mysql.username") //账号
@@ -86,14 +83,13 @@ func main() {
 	}
 
 	// 临时测试用
-	// utilsofparsedata.UpdateIntigritiData(db, serverJkey)
+	// utilsofparsedata.UpdateWildcardsData(db, serverJkey)
 	// os.Exit(0)
 
 	// 监测拉取arkadiyt数据后获取最新一次变动的文件
 	// 初始化查询时间，默认与xxl-job定时时间保持一致，查询此时间范围内变动的文件（与git日志比较）
-	xxljob_crontab_second := 36000
+	xxljob_crontab_second := 259200
 	chagedsFileL := GetArkadiytDataChangeFiles(serverJkey, xxljob_crontab_second)
-	// fmt.Println(chagedsFileL)
 
 	// 根据获取到有更新的文件列表进行对应更新
 	if len(chagedsFileL) >= 1 {
@@ -123,6 +119,14 @@ func main() {
 					log.Fatalln(e.Error())
 				}
 				utilsofparsedata.UpdateIntigritiData(db, serverJkey)
+			case "wildcards":
+				// 更新wildcard Data
+				log.Println("[Warn] 监测到wildcard数据更新，正在解析到数据库中..")
+				//把模型与数据库中的表对应起来
+				if e := db.AutoMigrate(&db_model.ArkadiytWildcard{}); e != nil {
+					log.Fatalln(e.Error())
+				}
+				utilsofparsedata.UpdateWildcardsData(db, serverJkey)
 			default:
 				log.Println("[Info] 暂时没有获取到新的文件变更")
 			}
