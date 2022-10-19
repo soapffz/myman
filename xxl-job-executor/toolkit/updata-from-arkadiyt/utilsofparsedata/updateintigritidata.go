@@ -1,7 +1,7 @@
 package utilsofparsedata
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -19,7 +19,7 @@ func UpdateIntigritiData(db *gorm.DB, serverJkey string) {
 	igJsonFile, _ := os.Open("bounty-targets-data/data/intigriti_data.json")
 
 	// 解析数据，直接获取每一个字段值赋值给结构体，避免结构体嵌套
-	igByte, _ := ioutil.ReadAll(igJsonFile)
+	igByte, _ := io.ReadAll(igJsonFile)
 	jgAllStr, err := jsonvalue.Unmarshal(igByte) //反序列化，数据类型必须是[]byte类型
 	if err != nil {
 		log.Println(err)

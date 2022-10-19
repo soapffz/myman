@@ -1,7 +1,7 @@
 package utilsofparsedata
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -19,7 +19,7 @@ func UpdateBugCrowdData(db *gorm.DB, serverJkey string) {
 	BcjsonFile, _ := os.Open("bounty-targets-data/data/bugcrowd_data.json")
 
 	// 解析数据，直接获取每一个字段值赋值给结构体，避免结构体嵌套
-	BcByte, _ := ioutil.ReadAll(BcjsonFile)
+	BcByte, _ := io.ReadAll(BcjsonFile)
 	BcAllStr, err := jsonvalue.Unmarshal(BcByte) //反序列化，数据类型必须是[]byte类型
 	if err != nil {
 		log.Println(err)

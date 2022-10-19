@@ -1,7 +1,7 @@
 package utilsofparsedata
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -19,7 +19,7 @@ func UpdateH1Data(db *gorm.DB, serverJkey string) {
 	h1jsonFile, _ := os.Open("bounty-targets-data/data/hackerone_data.json")
 
 	// 解析数据，直接获取每一个字段值赋值给结构体，避免结构体嵌套
-	h1Byte, _ := ioutil.ReadAll(h1jsonFile)
+	h1Byte, _ := io.ReadAll(h1jsonFile)
 	h1AllStr, err := jsonvalue.Unmarshal(h1Byte) //反序列化，数据类型必须是[]byte类型
 	if err != nil {
 		log.Println(err)
